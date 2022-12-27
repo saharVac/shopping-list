@@ -33,10 +33,3 @@ export const adjustItemIsToGet = (id, newIsToGet) => {
 export const deleteItem = (id) => {
     return Axios.delete(`https://svac-shopping-list.herokuapp.com/delete/${id}`)
 }
-
-// app.delete("/delete/:id", async (req, res) => {
-//     const id = req.params.id
-
-//     await ShoppingModel.findByIdAndRemove(id).exec()
-//     res.send("deleted")
-// })
