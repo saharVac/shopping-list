@@ -1,0 +1,18 @@
+.title {
+    text-align: center;
+    margin: 10px 0 20px 0;
+}
+
+.shopping-list, .in-stock-list {
+    padding: 0;
+    width: 100%;
+    margin-top: 0;
+}
+
+.add-item-btn {
+    width: 35%;
+    margin: auto;
+    text-align: center;
+    font-size: 20px;
+    border-radius: 8px;
+}

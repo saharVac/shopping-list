@@ -1,0 +1,26 @@
+* {
+    box-sizing: border-box;
+    list-style: none;
+}
+
+html, body, #root, .App {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    top: 0;
+}
+
+.App {
+    padding-top: 20px;
+    background-color: burlywood;
+    overflow-y: auto;
+    padding-bottom: 15px;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

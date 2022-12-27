@@ -1,0 +1,64 @@
+.item {
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 120px;
+    background-color: aqua;
+    width: 90%;
+    margin: 20px auto;
+    padding: 0 8px;
+    border-radius: 9px;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, .2);
+}
+
+.item-title {
+    height: 35%;
+    width: fit-content;
+    text-align: center;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-amount-container {
+    height: 30%;
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.item-amount {
+    display: flex;
+    margin: 0 10px;
+}
+
+.item-quantity {
+    margin-right: 3px;
+}
+
+.quantity-update-btn {
+    height: 15px;
+    width: 15px;
+    border-radius: 6px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item-action-buttons {
+    height: 35%;
+    width: 85%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.action-btn {
+    width: 30%;
+    border-radius: 8px;
+}
