@@ -24,3 +24,7 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
+button {
+    background-color: #55FFFE;
+}
