@@ -41,7 +41,7 @@ const reducer = (state, action) => {
 function App() {
 
   const refreshList = () => {
-    Axios.get('http://localhost:3001/read').then((response) => {
+    Axios.get('https://svac-shopping-list.herokuapp.com/read').then((response) => {
       const toGetItems = []
       const inStockItems = []
       response.data.forEach(item => item.isToGet ? toGetItems.push(item) : inStockItems.push(item));
