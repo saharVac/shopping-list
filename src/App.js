@@ -59,7 +59,7 @@ function App() {
   const [state, dispatch] = useReducer(reducer, {
     toGetItems: [],
     inStockItems: [],
-    listViewed: "In Stock"
+    listViewed: "Shopping List"
   })
 
   const newItem = (item) => {
