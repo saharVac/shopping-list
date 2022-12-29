@@ -45,7 +45,7 @@ function EditPopup({ newItem, closeEditPopup, editingInfo, AdjustEditItemQuntity
                             <input
                                 type="text"
                                 ref={itemNameRef}
-                                className="edit-item-name-input"
+                                className="edit-item-name-input edit-item-input"
                                 defaultValue={itemName}
                                 onChange={() => AdjustEditItemName(itemNameRef.current.value)}
                             />
@@ -56,7 +56,7 @@ function EditPopup({ newItem, closeEditPopup, editingInfo, AdjustEditItemQuntity
                             <input
                                 ref={itemUnitsRef}
                                 type="text"
-                                className="edit-item-units-input"
+                                className="edit-item-units-input edit-item-input"
                                 defaultValue={itemUnits}
                                 onChange={() => AdjustEditItemUnits(itemUnitsRef.current.value)}
                             />
