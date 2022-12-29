@@ -50,7 +50,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    height: 68%;
+    height: 65%;
     width: 100%;
 }
 
@@ -77,12 +77,13 @@
     margin-bottom: 10px;
     background-color: rgb(252, 29, 29);
     width: 40%;
+    height: 25px;
 }
 
 .edit-submit-btn {
     /* margin-top: 10%; */
-    width: 40%;
-    height: 8%;
+    width: 60%;
+    height: 10%;
     font-size: 24px;
 }
 
