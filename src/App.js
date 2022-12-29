@@ -4,6 +4,7 @@ import EditPopup from './Pages/EditPopup';
 import ShoppingListPage from './Pages/ShoppingList';
 import Axios from 'axios'
 import { deleteItem, updateItem } from './DataHandling';
+import NavBar from './Components/NavBar';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -33,6 +34,11 @@ const reducer = (state, action) => {
           action.payload
         ],
       }
+    case 'updateListViewed':
+      return {
+        ...state,
+        listViewed: action.payload
+      }
     default:
       throw new Error()
   }
@@ -52,7 +58,8 @@ function App() {
 
   const [state, dispatch] = useReducer(reducer, {
     toGetItems: [],
-    inStockItems: []
+    inStockItems: [],
+    listViewed: "In Stock"
   })
 
   const newItem = (item) => {
@@ -171,9 +178,18 @@ function App() {
     })
   }
 
+  const changeListSelection = (list) => {
+    // no need to update state unless different list selected
+    if (state.listViewed !== list) {
+      dispatch({ type: 'updateListViewed', payload: list })
+    }
+  }
+
   return (
     <div className="App">
+
       <ShoppingListPage
+        listViewed={state.listViewed}
         edit={edit}
         updateItemIsToGet={updateItemIsToGet}
         updateItemQuantity={updateItemQuantity}
@@ -183,6 +199,12 @@ function App() {
         addShoppingItem={() => edit("Shopping List")}
         addInStockItem={() => edit("In Stock")}
       />
+
+      <NavBar
+        changeListSelection={changeListSelection}
+        listViewed={state.listViewed}
+      />
+
       {
         // conditional display of the edit popup
         editing.isEditing ?

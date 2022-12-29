@@ -4,56 +4,35 @@ import './style.css'
 
 
 
-function ShoppingListPage({ updateItemQuantity, updateItemIsToGet, toGetItems, inStockItems, refreshList, addShoppingItem, addInStockItem, edit }) {
+function ShoppingListPage({ listViewed, updateItemQuantity, updateItemIsToGet, toGetItems, inStockItems, refreshList, addShoppingItem, addInStockItem, edit }) {
 
     useEffect(() => {
         refreshList()
     }, [])
 
+    const isShoppingList = (listViewed === "Shopping List")
+    const listItems = isShoppingList ? toGetItems : inStockItems
+
     return (
         <div className="page">
 
-            <h1 className="title">Shopping List</h1>
+            <h1 className="title">{listViewed}</h1>
 
             <button
-                className="add-item-btn add-shopping-item-btn"
-                onClick={() => addShoppingItem()}
+                className={`add-item-btn ${isShoppingList ? "add-shopping-item-btn" : "add-in-stock-item-btn"}`}
+                onClick={() => isShoppingList ? addShoppingItem() : addInStockItem()}
             >
                 + Add item
             </button>
 
-            <ul className="shopping-list">
+            <ul className={isShoppingList ? "shopping-list" : "in-stock-list"}>
                 {
-                    toGetItems.map(item => <Item
-                        editItem={() => edit("Shopping List", "Editing", item.itemName, item.quantity, item.units, item._id)}
+                    listItems.map(item => <Item
+                        editItem={() => edit(listViewed, "Editing", item.itemName, item.quantity, item.units, item._id)}
                         updateItemIsToGet={updateItemIsToGet}
                         updateItemQuantity={updateItemQuantity}
                         id={item._id} isToGet={item.isToGet}
                         key={item._id} name={item.itemName}
-                        quantity={item.quantity}
-                        units={item.units}
-                    />)
-                }
-            </ul>
-
-            <h1 className="title">In Stock</h1>
-
-            <button
-                className="add-item-btn add-in-stock-item-btn"
-                onClick={() => addInStockItem()}
-            >
-                + Add item
-            </button>
-
-            <ul className="in-stock-list">
-                {
-                    inStockItems.map(item => <Item
-                        editItem={() => edit("In Stock", "Editing", item.itemName, item.quantity, item.units, item._id)}
-                        updateItemIsToGet={updateItemIsToGet}
-                        updateItemQuantity={updateItemQuantity}
-                        id={item._id} isToGet={item.isToGet}
-                        key={item._id}
-                        name={item.itemName}
                         quantity={item.quantity}
                         units={item.units}
                     />)
