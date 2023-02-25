@@ -1,6 +1,7 @@
-import { useState, useReducer } from 'react';
+import { useState, useReducer, useRef } from 'react';
 import './App.css';
-import EditPopup from './Pages/EditPopup';
+import EditPopup from './Components/EditPopup';
+import DeletePopup from './Components/DeletePopup';
 import ShoppingListPage from './Pages/ShoppingList';
 import Axios from 'axios'
 import { deleteItem, updateItem } from './DataHandling';
@@ -77,9 +78,18 @@ function App() {
     itemQuantity: 0,
     itemUnits: "",
     itemID: "",
+    indicatingUnits: false,
+    indicatingQuantity: false,
   })
 
-  const edit = (listType, action = "Adding", name = "", quantity = 0, units = "", id = "") => {
+  const [deleting, setDeleting] = useState({
+    isDeleting: false,
+    deleteItemName: "",
+    deleteItemId: "",
+    deleteItemIsToGet: true
+  })
+
+  const edit = (listType, action = "Adding", name, quantity, units, id) => {
     setEditing({
       ...editing,
       isEditing: true,
@@ -89,6 +99,21 @@ function App() {
       itemQuantity: quantity,
       itemUnits: units,
       itemID: id
+    })
+  }
+
+  const setIndicatingUnits = (bool) => {
+    setEditing({
+      ...editing,
+      indicatingUnits: bool
+    })
+  }
+
+  const setIndicatingQuantity = (bool) => {
+    setEditing({
+      ...editing,
+      indicatingQuantity: bool,
+      itemQuantity: bool ? 1 : 0
     })
   }
 
@@ -113,10 +138,24 @@ function App() {
     })
   }
 
+  const newItemNameRef = useRef()
+
   const closeEditPopup = () => {
     setEditing({
       ...editing,
-      isEditing: false
+      isEditing: false,
+      indicatingUnits: false,
+      indicatingQuantity: false,
+      itemQuantity: 0,
+      itemName: ""
+    })
+    newItemNameRef.current.value = ""
+  }
+
+  const closeDeletePopup = () => {
+    setDeleting({
+      ...deleting,
+      isDeleting: false
     })
   }
 
@@ -157,22 +196,12 @@ function App() {
     }).catch(err => console.log(err))
   }
 
-  const removeItem = async () => {
-    await deleteItem(editing.itemID).then(response => {
-      let newList = editing.itemType === "Shopping List" ? state.toGetItems : state.inStockItems
-      newList = newList.filter(item => item._id !== editing.itemID)
-      dispatch({ type: editing.itemType === "Shopping List" ? 'updateToGetItems' : 'updateInStockItems', payload: newList })
-      // clear editing info
-      setEditing({
-        ...editing,
-        isEditing: false,
-        editAction: "",
-        itemType: "",
-        itemName: "",
-        itemQuantity: 0,
-        itemUnits: "",
-        itemID: "",
-      })
+  const removeItem = async (id, isToGet) => {
+    await deleteItem(id).then(response => {
+      let newList = isToGet ? state.toGetItems : state.inStockItems
+      newList = newList.filter(item => item._id !== id)
+      dispatch({ type: isToGet ? 'updateToGetItems' : 'updateInStockItems', payload: newList })
+      closeDeletePopup()
     }).catch(err => {
       console.log(err)
     })
@@ -185,10 +214,29 @@ function App() {
     }
   }
 
+  const updateEditingName = (val) => {
+    setEditing({
+      ...editing,
+      itemName: val
+    })
+  }
+
+  const showDeletePopup = (itemName, idForDeletion, isToGet) => {
+    setDeleting({
+      ...deleting,
+      isDeleting: true,
+      deleteItemName: itemName,
+      deleteItemId: idForDeletion,
+      deleteItemIsToGet: isToGet
+    })
+  }
+
   return (
     <div className="App">
 
       <ShoppingListPage
+        newItemNameRef={newItemNameRef}
+        showDeletePopup={showDeletePopup}
         listViewed={state.listViewed}
         edit={edit}
         updateItemIsToGet={updateItemIsToGet}
@@ -196,8 +244,8 @@ function App() {
         toGetItems={state.toGetItems}
         inStockItems={state.inStockItems}
         refreshList={refreshList}
-        addShoppingItem={() => edit("Shopping List")}
-        addInStockItem={() => edit("In Stock")}
+        addShoppingItem={(name) => edit("Shopping List", "Adding", name)}
+        addInStockItem={(name) => edit("In Stock", "Adding", name)}
       />
 
       <NavBar
@@ -209,7 +257,6 @@ function App() {
         // conditional display of the edit popup
         editing.isEditing ?
           <EditPopup
-            removeItem={removeItem}
             newItem={newItem}
             closeEditPopup={closeEditPopup}
             editingInfo={editing}
@@ -217,9 +264,24 @@ function App() {
             AdjustEditItemName={AdjustEditItemName}
             AdjustEditItemUnits={AdjustEditItemUnits}
             saveItem={saveItem}
+            updateEditingName={updateEditingName}
+            setIndicatingUnits={setIndicatingUnits}
+            setIndicatingQuantity={setIndicatingQuantity}
           /> :
           ""
       }
+
+      {
+        // conditional display of the delete popup
+        deleting.isDeleting ?
+          <DeletePopup
+            deleting={deleting}
+            closeDeletePopup={closeDeletePopup}
+            removeItem={removeItem}
+          /> :
+          ""
+      }
+
     </div>
   );
 }

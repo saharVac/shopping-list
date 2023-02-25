@@ -2,7 +2,7 @@ import React from 'react'
 import { adjustItemIsToGet, adjustItemQuantity } from '../../DataHandling'
 import './style.css'
 
-function Item({ id, name, quantity, units, isToGet, updateItemQuantity, updateItemIsToGet, editItem }) {
+function Item({ showDeletePopup, id, name, quantity, units, isToGet, updateItemQuantity, updateItemIsToGet, editItem }) {
 
     const adjustQuantity = async (isAdding) => {
         // execute as long as not subtracting from 1
@@ -16,7 +16,6 @@ function Item({ id, name, quantity, units, isToGet, updateItemQuantity, updateIt
     }
 
     const switchIsToGet = async () => {
-        // TODO: add "are you sure prompt"
         await adjustItemIsToGet(id, !isToGet).then((res) => {
             updateItemIsToGet(res.data)
         })
@@ -28,28 +27,37 @@ function Item({ id, name, quantity, units, isToGet, updateItemQuantity, updateIt
 
             <div className="item-title">{name}</div>
 
-            <div className="item-amount-container">
+            {
+                quantity ?
+                    <div className="item-amount-container">
 
-                <button
-                    className="quantity-update-btn reduce-quantity-btn"
-                    onClick={() => adjustQuantity(false)}
-                >
-                    -
-                </button>
+                        <button
+                            className="quantity-update-btn reduce-quantity-btn"
+                            onClick={() => adjustQuantity(false)}
+                        >
+                            -
+                    </button>
 
-                <div className="item-amount">
-                    <div className="item-quantity">{quantity}</div>
-                    <div className="item-units">{units}</div>
-                </div>
+                        <div className="item-amount">
+                            <div className="item-quantity">{quantity}</div>
+                            {
+                                units ?
+                                    <div className="item-units">{units}</div>
+                                    : ""
+                            }
 
-                <button
-                    className="quantity-update-btn add-quantity-btn"
-                    onClick={() => adjustQuantity(true)}
-                >
-                    +
-                </button>
+                        </div>
 
-            </div>
+                        <button
+                            className="quantity-update-btn add-quantity-btn"
+                            onClick={() => adjustQuantity(true)}
+                        >
+                            +
+                    </button>
+
+                    </div> :
+                    ""
+            }
 
             <div className="item-action-buttons">
                 <button
@@ -57,6 +65,14 @@ function Item({ id, name, quantity, units, isToGet, updateItemQuantity, updateIt
                     onClick={() => editItem()}
                 >
                     Edit
+                </button>
+                <button
+                    className="action-btn"
+                    id="delete-btn"
+                    onClick={() => showDeletePopup(name, id, isToGet)}
+                >
+                    <i className="fa fa-trash"></i>
+                    Delete
                 </button>
                 <button
                     className="action-btn"

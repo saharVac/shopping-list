@@ -67,3 +67,17 @@
     width: 35%;
     border-radius: 8px;
 }
+
+#delete-btn {
+    font-family: sans-serif;
+    font-weight: 100;
+    font-size: 12px;
+    background-color: rgb(252, 29, 29);
+    color: white;
+    width: 25%;
+    padding: 8px;
+    height: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

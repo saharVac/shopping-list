@@ -20,15 +20,6 @@
     align-items: flex-end;
 }
 
-.edit-popup-close-btn {
-    position: relative;
-    right: 10px;
-    top: 10px;
-    border: none;
-    background: none;
-    font-size: 20px;
-}
-
 .edit-popup-inner-container {
     width: 100%;
     height: 100%;
@@ -71,13 +62,6 @@
 .edit-quantity {
     margin: 0 8px;
     margin-bottom: 10px;
-}
-
-.delete-btn {
-    margin-bottom: 10px;
-    background-color: rgb(252, 29, 29);
-    width: 40%;
-    height: 25px;
 }
 
 .edit-submit-btn {

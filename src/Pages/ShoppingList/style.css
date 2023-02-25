@@ -3,6 +3,17 @@
     margin: 10px 0 20px 0;
 }
 
+.add-item-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-item-name-input {
+    margin-bottom: 10px;
+    height: 30px;
+    font-size: 20px;
+}
+
 .shopping-list, .in-stock-list {
     padding: 0;
     width: 100%;
