@@ -1,18 +1,22 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Item from '../../Components/Item'
 import './style.css'
 
 // TODO: unify functions addShoppingItem and addInStockItem for add item button onclick func
 
-function ShoppingListPage({ newItemNameRef, showDeletePopup, listViewed, updateItemQuantity, updateItemIsToGet, toGetItems, inStockItems, refreshList, addShoppingItem, addInStockItem, edit }) {
+function ShoppingListPage({ filterSearchTerm, setFilterSearchTerm, newItemNameRef, showDeletePopup, listViewed, updateItemQuantity, updateItemIsToGet, toGetItems, inStockItems, refreshList, addShoppingItem, addInStockItem, edit }) {
 
     useEffect(() => {
         refreshList()
     }, [])
 
     const isShoppingList = (listViewed === "Shopping List")
-    const listItems = isShoppingList ? toGetItems : inStockItems
-    // const newItemNameRef = useRef()
+    let listItems = isShoppingList ? toGetItems : inStockItems
+
+    const filteredList = (list) => {
+        const newList = list.filter(item => item.itemName.toLowerCase().includes(filterSearchTerm.toLowerCase()))
+        return newList
+    }
 
     return (
         <div className="page">
@@ -26,6 +30,7 @@ function ShoppingListPage({ newItemNameRef, showDeletePopup, listViewed, updateI
                     ref={newItemNameRef}
                     type="text"
                     className="add-item-name-input"
+                    onChange={(e) => setFilterSearchTerm(e.target.value)}
                 />
 
                 <button
@@ -46,7 +51,7 @@ function ShoppingListPage({ newItemNameRef, showDeletePopup, listViewed, updateI
 
             <ul className={isShoppingList ? "shopping-list" : "in-stock-list"}>
                 {
-                    listItems.map(item => <Item
+                    filteredList(listItems).map(item => <Item
                         showDeletePopup={showDeletePopup}
                         editItem={() => edit(listViewed, "Editing", item.itemName, item.quantity, item.units, item._id)}
                         updateItemIsToGet={updateItemIsToGet}

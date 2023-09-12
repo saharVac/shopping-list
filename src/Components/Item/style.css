@@ -3,7 +3,8 @@
     display: flex;
     flex-direction: column;
     height: 120px;
-    background-color: aqua;
+    background-color: #22668D;
+    color: #FFCC70;
     width: 90%;
     margin: 20px auto;
     padding: 0 8px;

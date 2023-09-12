@@ -40,6 +40,11 @@ const reducer = (state, action) => {
         ...state,
         listViewed: action.payload
       }
+    case 'setFilterSearchTerm':
+      return {
+        ...state,
+        filterSearchTerm: action.payload
+      }
     default:
       throw new Error()
   }
@@ -60,7 +65,8 @@ function App() {
   const [state, dispatch] = useReducer(reducer, {
     toGetItems: [],
     inStockItems: [],
-    listViewed: "Shopping List"
+    listViewed: "Shopping List",
+    filterSearchTerm: ''
   })
 
   const newItem = (item) => {
@@ -150,6 +156,7 @@ function App() {
       itemName: ""
     })
     newItemNameRef.current.value = ""
+    dispatch({ type: 'setFilterSearchTerm', payload: '' })
   }
 
   const closeDeletePopup = () => {
@@ -246,6 +253,8 @@ function App() {
         refreshList={refreshList}
         addShoppingItem={(name) => edit("Shopping List", "Adding", name)}
         addInStockItem={(name) => edit("In Stock", "Adding", name)}
+        setFilterSearchTerm={(term) => dispatch({ type: 'setFilterSearchTerm', payload: term })}
+        filterSearchTerm={state.filterSearchTerm}
       />
 
       <NavBar
