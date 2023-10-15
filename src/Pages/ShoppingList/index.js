@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
 import Item from '../../Components/Item'
 import './style.css'
 
@@ -8,7 +8,7 @@ function ShoppingListPage({ filterSearchTerm, setFilterSearchTerm, newItemNameRe
 
     useEffect(() => {
         refreshList()
-    }, [])
+    })
 
     const isShoppingList = (listViewed === "Shopping List")
     let listItems = isShoppingList ? toGetItems : inStockItems
@@ -28,7 +28,7 @@ function ShoppingListPage({ filterSearchTerm, setFilterSearchTerm, newItemNameRe
                 {/* TODO: Lift newItemNameRef to app and empty once closing edit popup */}
                 <input
                     ref={newItemNameRef}
-                    type="text"
+                    type="search"
                     className="add-item-name-input"
                     onChange={(e) => setFilterSearchTerm(e.target.value)}
                 />
@@ -60,6 +60,7 @@ function ShoppingListPage({ filterSearchTerm, setFilterSearchTerm, newItemNameRe
                         isToGet={item.isToGet}
                         key={item._id} name={item.itemName}
                         quantity={item.quantity}
+                        category={"category" in item ? item.category : null}
                         units={item.units}
                     />)
                 }

@@ -6,7 +6,7 @@ function Item({ showDeletePopup, id, name, quantity, units, isToGet, updateItemQ
 
     const adjustQuantity = async (isAdding) => {
         // execute as long as not subtracting from 1
-        if (!(!isAdding && quantity == 1)) {
+        if (!(!isAdding && quantity === 1)) {
             await adjustItemQuantity(id, isAdding ? quantity + 1 : quantity - 1).then((res) => {
                 updateItemQuantity(res.data)
             })
@@ -57,6 +57,9 @@ function Item({ showDeletePopup, id, name, quantity, units, isToGet, updateItemQ
 
                     </div> :
                     ""
+
+
+
             }
 
             <div className="item-action-buttons">
@@ -81,10 +84,6 @@ function Item({ showDeletePopup, id, name, quantity, units, isToGet, updateItemQ
                     {isToGet ? "Purchased" : "Ran Out"}
                 </button>
             </div>
-
-
-
-
 
         </li>
     )

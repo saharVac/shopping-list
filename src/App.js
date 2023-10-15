@@ -127,7 +127,7 @@ function App() {
     const current = editing.itemQuantity
     setEditing({
       ...editing,
-      itemQuantity: action == "add" ? current + 1 : current != 0 ? current - 1 : 0
+      itemQuantity: action === "add" ? current + 1 : current !== 0 ? current - 1 : 0
     })
   }
   const AdjustEditItemName = (value) => {
@@ -174,7 +174,7 @@ function App() {
   }
 
   const updateItemIsToGet = (data) => {
-    const { _id, quantity, isToGet } = data
+    const { _id, isToGet } = data
     let newInStockList = state.inStockItems
     let newShoppingList = state.toGetItems
     if (isToGet) {
