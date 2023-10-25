@@ -60,6 +60,7 @@ function App() {
       dispatch({ type: 'updateToGetItems', payload: toGetItems })
       dispatch({ type: 'updateInStockItems', payload: inStockItems })
     })
+    console.log("HERE")
   }
 
   const [state, dispatch] = useReducer(reducer, {

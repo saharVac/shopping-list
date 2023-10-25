@@ -8,13 +8,17 @@ function ShoppingListPage({ filterSearchTerm, setFilterSearchTerm, newItemNameRe
 
     useEffect(() => {
         refreshList()
-    })
+    }, [])
 
     const isShoppingList = (listViewed === "Shopping List")
     let listItems = isShoppingList ? toGetItems : inStockItems
 
     const filteredList = (list) => {
-        const newList = list.filter(item => item.itemName.toLowerCase().includes(filterSearchTerm.toLowerCase()))
+        const newList = list.filter(item => item.itemName.toLowerCase().includes(filterSearchTerm.toLowerCase())).sort((a, b) => a.itemName.localeCompare(b.itemName))
+
+        // const tt = newList.sort((a, b) => a.itemName.localeCompare(b.itemName))
+        // console.log(tt)
+
         return newList
     }
 
