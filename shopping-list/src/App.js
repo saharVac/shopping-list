@@ -1,4 +1,4 @@
-import { useState, useReducer, useRef } from 'react';
+import { useState, useReducer, useRef, useCallback } from 'react';
 import './App.css';
 import EditPopup from './Components/EditPopup';
 import DeletePopup from './Components/DeletePopup';
@@ -52,7 +52,14 @@ const reducer = (state, action) => {
 
 function App() {
 
-  const refreshList = () => {
+  const [state, dispatch] = useReducer(reducer, {
+    toGetItems: [],
+    inStockItems: [],
+    listViewed: "Shopping List",
+    filterSearchTerm: ''
+  })
+
+  const refreshList = useCallback(() => {
     Axios.get('https://svac-shopping-list.herokuapp.com/read').then((response) => {
       const toGetItems = []
       const inStockItems = []
@@ -60,14 +67,7 @@ function App() {
       dispatch({ type: 'updateToGetItems', payload: toGetItems })
       dispatch({ type: 'updateInStockItems', payload: inStockItems })
     })
-  }
-
-  const [state, dispatch] = useReducer(reducer, {
-    toGetItems: [],
-    inStockItems: [],
-    listViewed: "Shopping List",
-    filterSearchTerm: ''
-  })
+  }, [])
 
   const newItem = (item) => {
     dispatch({
