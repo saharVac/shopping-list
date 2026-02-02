@@ -1,5 +1,5 @@
 [build]
   base = "shopping-list"
   command = "npm install && npm run build"
-  publish = "shopping-list/build"
+  publish = "build"
 

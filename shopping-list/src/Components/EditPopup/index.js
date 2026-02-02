@@ -12,7 +12,7 @@ function EditPopup({ setIndicatingUnits, setIndicatingQuantity, newItem, closeEd
     const { editAction, itemType, itemName, itemQuantity, itemUnits, indicatingUnits, indicatingQuantity } = editingInfo
 
     const addItem = async () => {
-        const isToGet = itemType == "Shopping List"
+        const isToGet = itemType === "Shopping List"
         await addToList({
             itemName: itemName,
             quantity: itemQuantity,
@@ -112,13 +112,13 @@ function EditPopup({ setIndicatingUnits, setIndicatingQuantity, newItem, closeEd
                     <button
                         className="edit-submit-btn"
                         onClick={() => {
-                            editAction == "Adding" ?
+                            editAction === "Adding" ?
                                 addItem() :
                                 saveItem()
                             closeEditPopup()
                         }}
                     >
-                        {editAction == "Adding" ? "Add" : "Save"}
+                        {editAction === "Adding" ? "Add" : "Save"}
                     </button>
 
                 </div>

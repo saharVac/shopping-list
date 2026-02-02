@@ -8,7 +8,7 @@ function ShoppingListPage({ filterSearchTerm, setFilterSearchTerm, newItemNameRe
 
     useEffect(() => {
         refreshList()
-    }, [])
+    }, [refreshList])
 
     const isShoppingList = (listViewed === "Shopping List")
     let listItems = isShoppingList ? toGetItems : inStockItems
