@@ -22,6 +22,14 @@ function ShoppingListPage({ filterSearchTerm, setFilterSearchTerm, newItemNameRe
         return newList
     }
 
+    const clearSearch = () => {
+        if (newItemNameRef.current) {
+            newItemNameRef.current.value = ''
+            newItemNameRef.current.focus()
+        }
+        setFilterSearchTerm('')
+    }
+
     return (
         <div className="page">
 
@@ -30,12 +38,25 @@ function ShoppingListPage({ filterSearchTerm, setFilterSearchTerm, newItemNameRe
             <div className="add-item-section">
 
                 {/* TODO: Lift newItemNameRef to app and empty once closing edit popup */}
-                <input
-                    ref={newItemNameRef}
-                    type="search"
-                    className="add-item-name-input"
-                    onChange={(e) => setFilterSearchTerm(e.target.value)}
-                />
+                <div className="search-input-wrap">
+                    <i className="fa fa-search search-input-icon" aria-hidden="true"></i>
+                    <input
+                        ref={newItemNameRef}
+                        type="search"
+                        className="add-item-name-input"
+                        onChange={(e) => setFilterSearchTerm(e.target.value)}
+                    />
+                    {filterSearchTerm !== '' && (
+                        <button
+                            type="button"
+                            className="clear-search-btn"
+                            aria-label="Clear search"
+                            onClick={clearSearch}
+                        >
+                            <i className="fa fa-times" aria-hidden="true"></i>
+                        </button>
+                    )}
+                </div>
 
                 <button
 
