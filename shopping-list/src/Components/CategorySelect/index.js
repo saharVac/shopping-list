@@ -78,6 +78,8 @@ function CategorySelect({
         }
     }
 
+    const listboxId = 'category-select-listbox'
+
     const displayValue = isOpen ? searchQuery : (selectedCategory ? selectedCategory.name : '')
 
     return (
@@ -90,6 +92,7 @@ function CategorySelect({
             <div className="category-select-wrapper">
                 <input
                     type="text"
+                    role="combobox"
                     className="category-select-input"
                     value={displayValue}
                     placeholder={selectedCategory ? selectedCategory.name : placeholder}
@@ -106,10 +109,13 @@ function CategorySelect({
                     }}
                     aria-required={required}
                     aria-expanded={isOpen}
+                    aria-controls={listboxId}
                     aria-haspopup="listbox"
+                    aria-autocomplete="list"
+                    autoComplete="off"
                 />
                 {isOpen && !disabled && (
-                    <div className="category-dropdown" role="listbox">
+                    <div className="category-dropdown" role="listbox" id={listboxId}>
                         {filteredCategories.length > 0 && (
                             <ul className="category-list">
                                 {filteredCategories.map((category) => (
