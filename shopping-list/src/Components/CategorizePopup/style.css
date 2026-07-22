@@ -1,0 +1,84 @@
+.categorize-popup {
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.categorize-popup-inner {
+    width: 85%;
+    max-width: 420px;
+    background-color: rgb(211, 199, 199);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-bottom: 20px;
+}
+
+.categorize-popup-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 8px;
+}
+
+.categorize-title {
+    margin: 0 0 8px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.categorize-progress {
+    margin: 0 0 12px;
+    color: #444;
+    font-size: 15px;
+}
+
+.categorize-item-name {
+    margin: 0 0 18px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #22668D;
+    text-align: center;
+}
+
+.categorize-popup-content .category-select {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.categorize-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+.categorize-skip-btn,
+.categorize-save-btn {
+    flex: 1;
+    height: 42px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #888;
+    cursor: pointer;
+}
+
+.categorize-save-btn {
+    background: #22668D;
+    color: #fff;
+    border-color: #22668D;
+}
+
+.categorize-skip-btn:disabled,
+.categorize-save-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}

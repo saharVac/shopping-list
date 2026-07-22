@@ -2,9 +2,16 @@ import { useState, useReducer, useRef, useCallback } from 'react';
 import './App.css';
 import EditPopup from './Components/EditPopup';
 import DeletePopup from './Components/DeletePopup';
+import CategorizePopup from './Components/CategorizePopup';
+import ManageCategories from './Components/ManageCategories';
 import ShoppingListPage from './Pages/ShoppingList';
 import Axios from 'axios'
-import { deleteItem, updateItem } from './DataHandling';
+import {
+  deleteItem,
+  updateItem,
+  fetchCategories,
+  reorderCategories,
+} from './DataHandling';
 import NavBar from './Components/NavBar';
 
 const reducer = (state, action) => {
@@ -45,6 +52,31 @@ const reducer = (state, action) => {
         ...state,
         filterSearchTerm: action.payload
       }
+    case 'updateCategories':
+      return {
+        ...state,
+        categories: action.payload,
+      }
+    case 'addCategory':
+      return {
+        ...state,
+        categories: [...state.categories, action.payload].sort((a, b) => {
+          if (a.order !== b.order) return a.order - b.order
+          return a.name.localeCompare(b.name)
+        }),
+      }
+    case 'updateItemInLists': {
+      const item = action.payload
+      return {
+        ...state,
+        toGetItems: state.toGetItems.map((existing) =>
+          existing._id === item._id ? { ...item } : existing
+        ),
+        inStockItems: state.inStockItems.map((existing) =>
+          existing._id === item._id ? { ...item } : existing
+        ),
+      }
+    }
     default:
       throw new Error()
   }
@@ -55,18 +87,27 @@ function App() {
   const [state, dispatch] = useReducer(reducer, {
     toGetItems: [],
     inStockItems: [],
+    categories: [],
     listViewed: "Shopping List",
     filterSearchTerm: ''
   })
 
+  const [isCategorizing, setIsCategorizing] = useState(false)
+  const [categorizeQueue, setCategorizeQueue] = useState([])
+  const [isManagingCategories, setIsManagingCategories] = useState(false)
+
   const refreshList = useCallback(() => {
-    Axios.get('https://svac-shopping-list.herokuapp.com/read').then((response) => {
+    Promise.all([
+      Axios.get('https://svac-shopping-list.herokuapp.com/read'),
+      fetchCategories(),
+    ]).then(([itemsResponse, categoriesResponse]) => {
       const toGetItems = []
       const inStockItems = []
-      response.data.forEach(item => item.isToGet ? toGetItems.push(item) : inStockItems.push(item));
+      itemsResponse.data.forEach(item => item.isToGet ? toGetItems.push(item) : inStockItems.push(item));
       dispatch({ type: 'updateToGetItems', payload: toGetItems })
       dispatch({ type: 'updateInStockItems', payload: inStockItems })
-    })
+      dispatch({ type: 'updateCategories', payload: categoriesResponse.data })
+    }).catch(err => console.log(err))
   }, [])
 
   const newItem = (item) => {
@@ -74,6 +115,32 @@ function App() {
       type: item.isToGet ? 'addToGetItem' : 'addinStockItem',
       payload: item
     })
+  }
+
+  const handleCategoryCreated = (category) => {
+    dispatch({ type: 'addCategory', payload: category })
+  }
+
+  const handleReorderCategories = async (categoryIds) => {
+    const previous = state.categories
+    const reordered = categoryIds
+      .map((id, index) => {
+        const category = previous.find((c) => String(c._id) === String(id))
+        return category ? { ...category, order: index } : null
+      })
+      .filter(Boolean)
+
+    dispatch({ type: 'updateCategories', payload: reordered })
+
+    try {
+      const response = await reorderCategories(categoryIds)
+      if (response.data.categories) {
+        dispatch({ type: 'updateCategories', payload: response.data.categories })
+      }
+    } catch (err) {
+      console.log(err)
+      dispatch({ type: 'updateCategories', payload: previous })
+    }
   }
 
   const [editing, setEditing] = useState({
@@ -84,6 +151,7 @@ function App() {
     itemQuantity: 0,
     itemUnits: "",
     itemID: "",
+    categoryId: null,
     indicatingUnits: false,
     indicatingQuantity: false,
   })
@@ -95,7 +163,7 @@ function App() {
     deleteItemIsToGet: true
   })
 
-  const edit = (listType, action = "Adding", name, quantity, units, id) => {
+  const edit = (listType, action = "Adding", name, quantity, units, id, categoryId = null) => {
     setEditing({
       ...editing,
       isEditing: true,
@@ -104,7 +172,15 @@ function App() {
       itemName: name,
       itemQuantity: quantity,
       itemUnits: units,
-      itemID: id
+      itemID: id,
+      categoryId: categoryId || null,
+    })
+  }
+
+  const setEditCategoryId = (categoryId) => {
+    setEditing({
+      ...editing,
+      categoryId,
     })
   }
 
@@ -153,7 +229,8 @@ function App() {
       indicatingUnits: false,
       indicatingQuantity: false,
       itemQuantity: 0,
-      itemName: ""
+      itemName: "",
+      categoryId: null,
     })
     newItemNameRef.current.value = ""
     dispatch({ type: 'setFilterSearchTerm', payload: '' })
@@ -195,12 +272,23 @@ function App() {
       id: editing.itemID,
       itemName: editing.itemName,
       quantity: editing.itemQuantity,
-      units: editing.itemUnits
+      units: editing.itemUnits,
+      categoryId: editing.categoryId,
     }).then(response => {
       let newList = editing.itemType === "Shopping List" ? state.toGetItems : state.inStockItems
       newList = newList.map(item => editing.itemID !== item._id ? item : { ...response.data })
       dispatch({ type: editing.itemType === "Shopping List" ? 'updateToGetItems' : 'updateInStockItems', payload: newList })
     }).catch(err => console.log(err))
+  }
+
+  const assignItemCategory = async (item, categoryId) => {
+    const response = await updateItem({
+      id: item._id,
+      categoryId,
+    })
+    const updated = response.data
+    dispatch({ type: 'updateItemInLists', payload: updated })
+    return updated
   }
 
   const removeItem = async (id, isToGet) => {
@@ -238,6 +326,10 @@ function App() {
     })
   }
 
+  const uncategorizedItems = [...state.toGetItems, ...state.inStockItems].filter(
+    (item) => !item.categoryId
+  )
+
   return (
     <div className="App">
 
@@ -250,11 +342,19 @@ function App() {
         updateItemQuantity={updateItemQuantity}
         toGetItems={state.toGetItems}
         inStockItems={state.inStockItems}
+        categories={state.categories}
         refreshList={refreshList}
         addShoppingItem={(name) => edit("Shopping List", "Adding", name)}
         addInStockItem={(name) => edit("In Stock", "Adding", name)}
         setFilterSearchTerm={(term) => dispatch({ type: 'setFilterSearchTerm', payload: term })}
         filterSearchTerm={state.filterSearchTerm}
+        onReorderCategory={handleReorderCategories}
+        uncategorizedCount={uncategorizedItems.length}
+        onOpenCategorize={() => {
+          setCategorizeQueue(uncategorizedItems)
+          setIsCategorizing(true)
+        }}
+        onOpenManageCategories={() => setIsManagingCategories(true)}
       />
 
       <NavBar
@@ -276,6 +376,9 @@ function App() {
             updateEditingName={updateEditingName}
             setIndicatingUnits={setIndicatingUnits}
             setIndicatingQuantity={setIndicatingQuantity}
+            setEditCategoryId={setEditCategoryId}
+            categories={state.categories}
+            onCategoryCreated={handleCategoryCreated}
           /> :
           ""
       }
@@ -287,6 +390,35 @@ function App() {
             deleting={deleting}
             closeDeletePopup={closeDeletePopup}
             removeItem={removeItem}
+          /> :
+          ""
+      }
+
+      {
+        isCategorizing && categorizeQueue.length > 0 ?
+          <CategorizePopup
+            items={categorizeQueue}
+            categories={state.categories}
+            onCategoryCreated={handleCategoryCreated}
+            onAssignCategory={assignItemCategory}
+            onClose={() => {
+              setIsCategorizing(false)
+              setCategorizeQueue([])
+            }}
+          /> :
+          ""
+      }
+
+      {
+        isManagingCategories ?
+          <ManageCategories
+            categories={state.categories}
+            items={[...state.toGetItems, ...state.inStockItems]}
+            onCategoriesChange={(categories) =>
+              dispatch({ type: 'updateCategories', payload: categories })
+            }
+            onItemsNeedRefresh={refreshList}
+            onClose={() => setIsManagingCategories(false)}
           /> :
           ""
       }

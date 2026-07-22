@@ -1,15 +1,38 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { addToList } from '../../DataHandling'
+import CategorySelect from '../CategorySelect'
 import './style.css'
 
-function EditPopup({ setIndicatingUnits, setIndicatingQuantity, newItem, closeEditPopup, editingInfo, AdjustEditItemQuntity, AdjustEditItemName, AdjustEditItemUnits, saveItem, removeItem }) {
-
+function EditPopup({
+    setIndicatingUnits,
+    setIndicatingQuantity,
+    newItem,
+    closeEditPopup,
+    editingInfo,
+    AdjustEditItemQuntity,
+    AdjustEditItemName,
+    AdjustEditItemUnits,
+    saveItem,
+    setEditCategoryId,
+    categories,
+    onCategoryCreated,
+}) {
     const itemNameRef = useRef()
     const itemUnitsRef = useRef()
     const indicatingUnitsRef = useRef()
     const indicatingQuantityRef = useRef()
+    const [categoryError, setCategoryError] = useState('')
 
-    const { editAction, itemType, itemName, itemQuantity, itemUnits, indicatingUnits, indicatingQuantity } = editingInfo
+    const {
+        editAction,
+        itemType,
+        itemName,
+        itemQuantity,
+        itemUnits,
+        indicatingUnits,
+        indicatingQuantity,
+        categoryId,
+    } = editingInfo
 
     const addItem = async () => {
         const isToGet = itemType === "Shopping List"
@@ -17,12 +40,27 @@ function EditPopup({ setIndicatingUnits, setIndicatingQuantity, newItem, closeEd
             itemName: itemName,
             quantity: itemQuantity,
             units: itemUnits,
-            isToGet: isToGet
+            isToGet: isToGet,
+            categoryId: categoryId,
         }).then((res) => {
             newItem(res.data)
         }).catch(err => {
             console.log(err)
         })
+    }
+
+    const handleSubmit = async () => {
+        if (!categoryId) {
+            setCategoryError('Category is required')
+            return
+        }
+        setCategoryError('')
+        if (editAction === "Adding") {
+            await addItem()
+        } else {
+            await saveItem()
+        }
+        closeEditPopup()
     }
 
     return (
@@ -49,6 +87,19 @@ function EditPopup({ setIndicatingUnits, setIndicatingQuantity, newItem, closeEd
                                 className="edit-item-name-input edit-item-input"
                                 defaultValue={itemName}
                                 onChange={() => AdjustEditItemName(itemNameRef.current.value)}
+                            />
+                        </div>
+
+                        <div className="edit-popup-input-area category-input-area">
+                            <CategorySelect
+                                value={categoryId || null}
+                                onChange={(id) => {
+                                    setEditCategoryId(id)
+                                    setCategoryError('')
+                                }}
+                                categories={categories}
+                                onCategoryCreated={onCategoryCreated}
+                                error={categoryError}
                             />
                         </div>
 
@@ -111,12 +162,7 @@ function EditPopup({ setIndicatingUnits, setIndicatingQuantity, newItem, closeEd
 
                     <button
                         className="edit-submit-btn"
-                        onClick={() => {
-                            editAction === "Adding" ?
-                                addItem() :
-                                saveItem()
-                            closeEditPopup()
-                        }}
+                        onClick={handleSubmit}
                     >
                         {editAction === "Adding" ? "Add" : "Save"}
                     </button>

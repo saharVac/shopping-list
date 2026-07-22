@@ -1,0 +1,17 @@
+---
+description: Shopping list project context — read and maintain Cursor.md
+alwaysApply: true
+---
+
+# Project context
+
+This is the **shopping list** monorepo. At the start of each session:
+
+1. Read `../Cursor.md` (monorepo root, one level above this workspace) for full architecture, API, data model, deploy, and roadmap context.
+2. If the workspace root is the monorepo itself, read `Cursor.md` at the repo root instead.
+
+When you learn new durable facts (architecture changes, new APIs, conventions, deploy setup, bugs, roadmap):
+
+- Update the relevant section in the monorepo `Cursor.md`
+- Append a dated entry to the **Living updates** changelog table
+- Keep `shopping-list/Cursor.md` as a short pointer only — do not duplicate the full breakdown there
